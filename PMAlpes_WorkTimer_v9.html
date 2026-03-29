@@ -1515,7 +1515,8 @@ function getWKEY(offset){
 
 function loadWeek(offset){
   weekOffset = offset;
-  var key = getWKEY(offset);
+  // Pour la semaine courante, utiliser la clé originale WKEY
+  var key = offset===0 ? WKEY : getWKEY(offset);
   var loaded = null;
   try{ loaded = JSON.parse(localStorage.getItem(key)||'null'); }catch(e){}
   if(!loaded) loaded = {days: DAYS.map(function(_,i){return defDay(i);})};
@@ -1578,11 +1579,11 @@ function saveCurrentWeek(){
 // Override save() pour tenir compte du weekOffset
 var _origSave = save;
 save = function(){
-  var key = getWKEY(weekOffset);
+  // Utiliser WKEY original pour offset=0, sinon getWKEY
+  var key = weekOffset===0 ? WKEY : getWKEY(weekOffset);
   try{ localStorage.setItem(key, JSON.stringify(D)); }catch(e){}
-  // Mettre à jour le timer persisté si en cours
   if(runningTimer){
-    try{localStorage.setItem('pmAlpes_timer',JSON.stringify({taskId:runningTimer.taskId,dayIdx:runningTimer.dayIdx,startedAt:runningTimer.startedAt,weekKey:getWKEY(weekOffset)}));}catch(e){}
+    try{localStorage.setItem('pmAlpes_timer',JSON.stringify({taskId:runningTimer.taskId,dayIdx:runningTimer.dayIdx,startedAt:runningTimer.startedAt,weekKey:key}));}catch(e){}
   }
 };
 
