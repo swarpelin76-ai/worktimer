@@ -1707,8 +1707,16 @@ function goTab(idx,btn){
 //  BACKUP
 // ═══════════════════════════════════════
 function copyUrl(){
-  var url='https://swarpelin76-ai.github.io/worktime/SwissWorkTimer_Nestv3.html';
-  navigator.clipboard.writeText(url).then(function(){showToast('✓ URL copiée !');}).catch(function(){showToast(url,4000);});
+  var url=window.location.href.split('?')[0];
+  navigator.clipboard.writeText(url).then(function(){showToast('✓ URL copiée !');}).catch(function(){
+    // Fallback iOS : sélectionner le texte
+    var el=document.createElement('input');
+    el.value=url;document.body.appendChild(el);
+    el.select();el.setSelectionRange(0,99999);
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast('✓ URL copiée !');
+  });
 }
 function backupData(){
   var backup={};
